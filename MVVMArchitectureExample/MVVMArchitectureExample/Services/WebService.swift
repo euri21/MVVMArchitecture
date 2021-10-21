@@ -9,8 +9,10 @@ import UIKit
 import Foundation
 
 class WebService {
-    func getArticles(_ url: URL, completion: @escaping([Article]?) -> ()) {
-        URLSession.shared.dataTask(with: url, completionHandler: { data, response, error in
+    static let NEWS_URL = "https://newsapi.org/v2/top-headlines?country=us&apiKey=e9b514c39c5f456db8ed4ecb693b0040"
+    
+    func getArticles(_ url: URL, completion: @escaping(ArticleList?) -> ()) {
+        URLSession.shared.dataTask(with: url) { data, response, error in
             guard error == nil else {
                 print(error?.localizedDescription)
                 completion(nil)
@@ -22,7 +24,7 @@ class WebService {
                 return
             }
             let articleList = try? JSONDecoder().decode(ArticleList.self, from: data)
-            completion(articleList?.articles)
-        })
+            completion(articleList)
+        }.resume()
     }
 }
